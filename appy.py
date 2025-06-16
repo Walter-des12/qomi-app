@@ -8,16 +8,22 @@ import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 
 # === Conectar a Google Sheets localmente con tu archivo .json ===
-def conectar_google_libro(nombre_archivo, ruta_credenciales="credenciales.json"):
+import json
+
+def conectar_google_libro(nombre_archivo):
     scope = [
         "https://spreadsheets.google.com/feeds",
         "https://www.googleapis.com/auth/spreadsheets",
         "https://www.googleapis.com/auth/drive.file",
         "https://www.googleapis.com/auth/drive"
     ]
-    credentials = ServiceAccountCredentials.from_json_keyfile_name(ruta_credenciales, scope)
+
+    # ✅ Carga el secreto desde st.secrets
+    credentials_dict = json.loads(st.secrets["GCP_SERVICE_ACCOUNT"])
+    credentials = ServiceAccountCredentials.from_json_keyfile_dict(credentials_dict, scope)
     client = gspread.authorize(credentials)
-    return client.open(nombre_archivo)  # ✅ Devuelve el libro completo
+    return client.open(nombre_archivo)
+
 
 
 
